@@ -18,30 +18,12 @@ class BooksApp extends React.Component {
     });
   }
 
-  getBooks(books) {
-    let newBooks = []
-
-    for (const book of books) {
-      BooksAPI.get(book).then(result => {
-        newBooks.push(result)
-
-      });
-    }
-    console.log(newBooks)
-  }
-
-  updateShelf = (book, value) => {
-    let newBooks = []
-    BooksAPI.update(book, value).then(result => {
-      const currentlyReading = result.currentlyReading
-      const wantToRead = result.wantToRead
-      const read = result.read
-
-      newBooks = [...currentlyReading, ...wantToRead, ...read]
-      console.log(newBooks)
-      this.getBooks(newBooks)
-
-    });
+  updateShelf = (book, shelf) => {
+    BooksAPI.update(book, shelf).then(() => {
+      BooksAPI.getAll().then((books) => {
+        this.setState({ books })
+      })
+    })
   }
 
   render() {
