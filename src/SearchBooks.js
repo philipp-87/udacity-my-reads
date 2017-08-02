@@ -9,46 +9,57 @@ import PropTypes from 'prop-types'
 class SearchBooks extends Component {
 
     static propTypes = {
-        onUpdateShelf: PropTypes.func
+        onUpdateShelf: PropTypes.func,
+        books: PropTypes.array
     }
 
     state = {
         query: '',
-        books: []
+        searchedBooks: []
     }
 
     updateQuery = (query) => {
         this.setState({ query: query.trim() }, function () {
-            this.searchForBooks();
+            this.searchForBooks()
         })
     }
 
-    clearQuery = () => {
-        this.setState({ query: '' })
-    }
-
     searchForBooks = () => {
-        let showingBooks
         const { query } = this.state
-        const match = new RegExp(escapeRegExp(query), 'i')
 
         if (query) {
-            BooksAPI.search(query, 20).then(result => {
-                if (result.error) {
-                    this.setState({ books: result.items })
+            BooksAPI.search(query, 20).then(searchResult => {
+                if (typeof searchResult !== 'undefined' && Array.isArray(searchResult)) {
+                    searchResult.sort(sortBy('title'))
+
+                    for (const book of searchResult) {
+                        console.log(book)
+                        book.shelf = 'none'
+                    }
+
+                    for (const book of this.props.books) {
+                        searchResult = searchResult.map((b) => {
+                            //if same book is found then overwrite shelf
+                            if (book.id === b.id) {
+                                b.shelf = book.shelf
+                            }
+                            return b
+                        })
+                    }
+
+                    this.setState({ searchedBooks: searchResult });
                 } else {
-                    showingBooks = result.filter((book) => match.test(book.title))
-                    showingBooks.sort(sortBy('title'))
-                    console.log(showingBooks);
-                    this.setState({ books: showingBooks });
+                    this.setState({ searchedBooks: null });
                 }
             });
+        } else {
+            return null;
         }
 
     }
 
     render() {
-        const { query, books } = this.state
+        const { query, searchedBooks } = this.state
 
         return (
             <div className="search-books">
@@ -75,10 +86,10 @@ class SearchBooks extends Component {
 
                     </div>
                 </div>
-                {books && query && (
+                {searchedBooks && query && (
                     <div className="search-books-results">
                         <ol className="books-grid">
-                            {books.map((book) => (
+                            {searchedBooks.map((book) => (
                                 <Book
                                     key={book.id}
                                     backgroundImage={(book.imageLinks !== undefined ? `url(${book.imageLinks.thumbnail})` : null)}
