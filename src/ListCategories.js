@@ -21,13 +21,9 @@ class ListCategories extends Component {
                     <ol className="books-grid">
                         {books.filter(book => book.shelf === shelf).map((book) => (
                             <Book
+                                book={book}
                                 key={book.id}
-                                backgroundImage={(book.imageLinks !== undefined ? `url(${book.imageLinks.thumbnail})` : null)}
-                                title={book.title}
-                                authors={[book.authors].join(", ")}
-                                id={book.id}
                                 onUpdateShelf={this.props.onUpdateShelf}
-                                shelf={book.shelf}
                             />
                         ))}
                     </ol>
