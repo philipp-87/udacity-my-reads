@@ -17,48 +17,43 @@ class SearchBooks extends Component {
         searchedBooks: []
     }
 
-    updateQuery = (query) => {
-        this.setState({ query: query.trim() }, function () {
-            this.searchForBooks()
-        })
+    // Sets the state of query and then calls searchForBooks with the query
+    updateQuery(query) {
+        query = query.trim()
+        this.setState({ query })
+        this.searchForBooks(query)
     }
 
-    searchForBooks = () => {
-        const { query } = this.state
-
+    // Gets called with a query. 
+    searchForBooks = (query) => {
         if (query) {
             BooksAPI.search(query, 20).then(searchResult => {
-                if (typeof searchResult !== 'undefined' && Array.isArray(searchResult)) {
-                    searchResult.sort(sortBy('title'))
+                if (Array.isArray(searchResult)) {
 
-                    for (const book of searchResult) {
-                        book.shelf = 'none'
-                    }
-
-                    for (const book of this.props.books) {
-                        searchResult = searchResult.map((b) => {
-                            //if same book is found then overwrite shelf
-                            if (book.id === b.id) {
-                                b.shelf = book.shelf
+                    searchResult.map(bookInSearchResult => {
+                        for (const book of this.props.books) {
+                            bookInSearchResult.shelf = 'moveTo'
+                            if (bookInSearchResult.id === book.id) {
+                                bookInSearchResult.shelf = book.shelf
                             }
-                            return b
-                        })
-                    }
-
+                            return bookInSearchResult
+                        }
+                        return bookInSearchResult
+                    })
+                    searchResult.sort(sortBy('title'))
                     this.setState({ searchedBooks: searchResult });
                 } else {
                     this.setState({ searchedBooks: null });
+                    console.log('No result for "' + query + '". Please review "SEARCH_TERMS.md" for all available search terms.')
                 }
             });
         } else {
             return null;
         }
-
     }
 
     render() {
         const { query, searchedBooks } = this.state
-
         return (
             <div className="search-books">
                 <div className="search-books-bar">

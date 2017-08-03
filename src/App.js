@@ -19,10 +19,12 @@ class BooksApp extends React.Component {
   }
 
   updateShelf = (selectedBook, updatedShelf) => {
-    console.log(selectedBook)
+    console.log(selectedBook.title + ' ' + selectedBook.shelf)
+    console.log(updatedShelf)
     BooksAPI.update(selectedBook.id, updatedShelf).then(newBooks => {
       this.setState(state => {
-        const updatedBooks = state.books.filter(book => book.id !== selectedBook.id).concat([selectedBook]).map(book => {
+        const updatedBooks = state.books.filter(book => book.id !== selectedBook.id).concat(selectedBook)
+        updatedBooks.map(book => {
           book.shelf = book.id === selectedBook.id ? updatedShelf : book.shelf
           return book
         })
@@ -32,7 +34,6 @@ class BooksApp extends React.Component {
   }
 
   render() {
-    console.log(this.state.books)
     return (
       <div className="app">
         <Route
