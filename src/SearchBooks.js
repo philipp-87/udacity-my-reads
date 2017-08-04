@@ -28,18 +28,21 @@ class SearchBooks extends Component {
     // Each book in searchResult gets the shelf-value 'moveTo' as default. If the book is already in ListCategories the book in 
     // searchResult gets the actual shelf.value
     searchForBooks = (query) => {
+        const { books } = this.props;
+
         if (query) {
             BooksAPI.search(query, 20).then(searchResult => {
                 if (Array.isArray(searchResult)) {
 
                     searchResult.map(bookInSearchResult => {
-                        for (const book of this.props.books) {
-                            bookInSearchResult.shelf = 'moveTo';
+                        bookInSearchResult.shelf = 'moveTo';
+
+                        books.map(book => {
                             if (bookInSearchResult.id === book.id) {
                                 bookInSearchResult.shelf = book.shelf;
                             }
                             return bookInSearchResult;
-                        }
+                        })
                         return bookInSearchResult;
                     });
                     searchResult.sort(sortBy('title'));
