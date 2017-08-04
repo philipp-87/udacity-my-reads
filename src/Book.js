@@ -8,13 +8,15 @@ class Book extends React.Component {
         onUpdateShelf: PropTypes.func,
     }
 
+    // Handles the change for a book shelf
     handleChange = (event) => {
         this.setState({ value: event.target.value });
-        this.props.onUpdateShelf(this.props.book, event.target.value)
+        this.props.onUpdateShelf(this.props.book, event.target.value);
     }
 
+    // UI for a single book
     render() {
-        const { book } = this.props
+        const { book } = this.props;
         return (
             <li>
                 <div className="book">

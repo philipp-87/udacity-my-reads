@@ -10,29 +10,31 @@ class BooksApp extends React.Component {
     books: []
   }
 
+  // All books which are currently in your shelfs are returned by the BooksAPI 
   componentDidMount() {
     BooksAPI.getAll().then(result => {
       this.setState({
         books: result
-      })
+      });
     });
   }
 
+  // When a book shelf is changed in the ListCategories or SearchBooks component, updateShelf() checks if your selected books isn't in your ListCategories
+  // component. If it's not the book moves to ListCategories with the selected shelf value. If it's in your ListCategories the shelf of the selected book is updated.  
   updateShelf = (selectedBook, updatedShelf) => {
-    console.log(selectedBook.title + ' ' + selectedBook.shelf)
-    console.log(updatedShelf)
     BooksAPI.update(selectedBook.id, updatedShelf).then(newBooks => {
       this.setState(state => {
-        const updatedBooks = state.books.filter(book => book.id !== selectedBook.id).concat(selectedBook)
+        const updatedBooks = state.books.filter(book => book.id !== selectedBook.id).concat(selectedBook);
         updatedBooks.map(book => {
-          book.shelf = book.id === selectedBook.id ? updatedShelf : book.shelf
-          return book
-        })
-        return { books: updatedBooks }
-      })
+          book.shelf = book.id === selectedBook.id ? updatedShelf : book.shelf;
+          return book;
+        });
+        return { books: updatedBooks };
+      });
     })
   }
 
+  // UI for the application
   render() {
     return (
       <div className="app">
@@ -52,4 +54,4 @@ class BooksApp extends React.Component {
   }
 }
 
-export default BooksApp
+export default BooksApp;

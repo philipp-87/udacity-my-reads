@@ -10,9 +10,9 @@ class ListCategories extends Component {
         books: PropTypes.array
     }
 
+    // UI for a single shelf with a book component
     renderShelf(shelf, name) {
-
-        const { books } = this.props
+        const { books } = this.props;
 
         return (
             <div className="bookshelf">
@@ -32,6 +32,7 @@ class ListCategories extends Component {
         )
     }
 
+    // UI for the ListCategories component with three shelfs
     render() {
         return (
             <div className="list-books">

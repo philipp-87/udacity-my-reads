@@ -19,12 +19,14 @@ class SearchBooks extends Component {
 
     // Sets the state of query and then calls searchForBooks with the query
     updateQuery(query) {
-        query = query.trim()
-        this.setState({ query })
-        this.searchForBooks(query)
+        query = query.trim();
+        this.setState({ query });
+        this.searchForBooks(query);
     }
 
-    // Gets called with a query. 
+    // Gets called by updateQuery() with query as arg. When there is a query the BooksAPI responds with a searchResult.
+    // Each book in searchResult gets the shelf-value 'moveTo' as default. If the book is already in ListCategories the book in 
+    // searchResult gets the actual shelf.value
     searchForBooks = (query) => {
         if (query) {
             BooksAPI.search(query, 20).then(searchResult => {
@@ -32,19 +34,19 @@ class SearchBooks extends Component {
 
                     searchResult.map(bookInSearchResult => {
                         for (const book of this.props.books) {
-                            bookInSearchResult.shelf = 'moveTo'
+                            bookInSearchResult.shelf = 'moveTo';
                             if (bookInSearchResult.id === book.id) {
-                                bookInSearchResult.shelf = book.shelf
+                                bookInSearchResult.shelf = book.shelf;
                             }
-                            return bookInSearchResult
+                            return bookInSearchResult;
                         }
-                        return bookInSearchResult
-                    })
-                    searchResult.sort(sortBy('title'))
+                        return bookInSearchResult;
+                    });
+                    searchResult.sort(sortBy('title'));
                     this.setState({ searchedBooks: searchResult });
                 } else {
                     this.setState({ searchedBooks: null });
-                    console.log('No result for "' + query + '". Please review "SEARCH_TERMS.md" for all available search terms.')
+                    console.log('No result for "' + query + '". Please review "SEARCH_TERMS.md" for all available search terms.');
                 }
             });
         } else {
@@ -52,8 +54,9 @@ class SearchBooks extends Component {
         }
     }
 
+    // UI for the SearchBooks component
     render() {
-        const { query, searchedBooks } = this.state
+        const { query, searchedBooks } = this.state;
         return (
             <div className="search-books">
                 <div className="search-books-bar">
